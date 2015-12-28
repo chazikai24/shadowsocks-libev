@@ -1,16 +1,28 @@
 #!/bin/sh /etc/rc.common
-# Copyright (C) 2006-2011 OpenWrt.org
 
 START=95
 
 SERVICE_USE_PID=1
 SERVICE_WRITE_PID=1
 SERVICE_DAEMONIZE=1
+CONFIG=/etc/shadowsocks.json
+DNS=8.8.8.8:53
+TUNNEL_PORT=5353
 
 start() {
-    service_start /usr/bin/ss-local -b 0.0.0.0 -c /etc/shadowsocks.json
+	# Client Mode
+	service_start /usr/bin/ss-local -c $CONFIG -b 0.0.0.0
+	# Proxy Mode
+	#service_start /usr/bin/ss-redir -c $CONFIG -b 0.0.0.0
+	# Tunnel
+	#service_start /usr/bin/ss-tunnel -c $CONFIG -b 0.0.0.0 -u -l $TUNNEL_PORT -L $DNS
 }
 
 stop() {
-    service_stop /usr/bin/ss-local
+	# Client Mode
+	service_stop /usr/bin/ss-local
+	# Proxy Mode
+	#service_stop /usr/bin/ss-redir
+	# Tunnel
+	#service_stop /usr/bin/ss-tunnel
 }
